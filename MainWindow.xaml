@@ -4,425 +4,691 @@
         Title="Boom Avoider"
         Width="750"
         Height="900"
-        MinWidth="650"
-        MinHeight="800"
+        MinWidth="640"
+        MinHeight="820"
         WindowStartupLocation="CenterScreen"
-        Background="#F4F7FB">
+        Background="#F4F7FB"
+        FontFamily="Segoe UI">
 
     <Window.Resources>
 
-        <!-- Colors -->
-        <SolidColorBrush x:Key="PrimaryBrush" Color="#6C5CE7"/>
-        <SolidColorBrush x:Key="DarkBrush" Color="#171A2B"/>
-        <SolidColorBrush x:Key="TextBrush" Color="#202438"/>
-        <SolidColorBrush x:Key="MutedBrush" Color="#7C829B"/>
+        <!-- ================= COLORS ================= -->
 
-        <!-- Modern Tile Style -->
-        <Style x:Key="GameTileStyle" TargetType="Button">
-            <Setter Property="Background" Value="#FFFFFF"/>
-            <Setter Property="Foreground" Value="#30354D"/>
-            <Setter Property="FontSize" Value="30"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="MinHeight" Value="65"/>
-            <Setter Property="MinWidth" Value="65"/>
-            <Setter Property="Cursor" Value="Hand"/>
+        <SolidColorBrush x:Key="PrimaryBrush"
+                         Color="#6C5CE7"/>
+
+        <SolidColorBrush x:Key="DarkBrush"
+                         Color="#171A2B"/>
+
+        <SolidColorBrush x:Key="TextBrush"
+                         Color="#202438"/>
+
+        <SolidColorBrush x:Key="MutedBrush"
+                         Color="#7C829B"/>
+
+
+        <!-- ================= BASE TILE ================= -->
+
+        <Style x:Key="BaseTileStyle"
+               TargetType="Button">
+
+            <Setter Property="FontSize"
+                    Value="36"/>
+
+            <Setter Property="FontWeight"
+                    Value="Bold"/>
+
+            <Setter Property="BorderThickness"
+                    Value="0"/>
+
+            <Setter Property="Margin"
+                    Value="6"/>
+
+            <Setter Property="MinHeight"
+                    Value="90"/>
+
+            <Setter Property="MinWidth"
+                    Value="90"/>
+
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Center"/>
+
+            <Setter Property="VerticalContentAlignment"
+                    Value="Center"/>
+
             <Setter Property="Template">
+
                 <Setter.Value>
+
                     <ControlTemplate TargetType="Button">
+
                         <Border x:Name="TileBorder"
                                 Background="{TemplateBinding Background}"
-                                BorderBrush="#E4E7F0"
+                                BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="1"
                                 CornerRadius="14">
-                            <Border.Effect>
-                                <DropShadowEffect Color="#D5D9E5"
-                                                  BlurRadius="8"
-                                                  ShadowDepth="2"
-                                                  Opacity="0.35"/>
-                            </Border.Effect>
 
-                            <ContentPresenter HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"/>
+                            <ContentPresenter
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                TextElement.Foreground="{TemplateBinding Foreground}"/>
+
                         </Border>
 
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
+
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+
                                 <Setter TargetName="TileBorder"
                                         Property="Background"
                                         Value="#F0EEFF"/>
+
                                 <Setter TargetName="TileBorder"
                                         Property="BorderBrush"
                                         Value="#B7AEFF"/>
+
                             </Trigger>
 
-                            <Trigger Property="IsPressed" Value="True">
+                            <Trigger Property="IsPressed"
+                                     Value="True">
+
                                 <Setter TargetName="TileBorder"
                                         Property="Background"
                                         Value="#E4E0FF"/>
+
                             </Trigger>
 
-                            <Trigger Property="IsEnabled" Value="False">
+                            <Trigger Property="IsEnabled"
+                                     Value="False">
+
                                 <Setter TargetName="TileBorder"
                                         Property="Opacity"
                                         Value="1"/>
+
                             </Trigger>
+
                         </ControlTemplate.Triggers>
+
                     </ControlTemplate>
+
                 </Setter.Value>
+
             </Setter>
+
         </Style>
 
-        <!-- Safe Tile -->
-        <Style x:Key="SafeTileStyle" TargetType="Button">
-            <Setter Property="Background" Value="#E8FFF3"/>
-            <Setter Property="Foreground" Value="#0DAD68"/>
-            <Setter Property="FontSize" Value="34"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="MinHeight" Value="65"/>
-            <Setter Property="MinWidth" Value="65"/>
-            <Setter Property="Cursor" Value="Arrow"/>
-            <Setter Property="IsEnabled" Value="False"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}"
-                                BorderBrush="#A9EBCB"
-                                BorderThickness="1"
-                                CornerRadius="14">
 
-                            <ContentPresenter HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
+        <!-- ================= GAME TILE ================= -->
+
+        <Style x:Key="GameTileStyle"
+               TargetType="Button"
+               BasedOn="{StaticResource BaseTileStyle}">
+
+            <Setter Property="Background"
+                    Value="#FFFFFF"/>
+
+            <Setter Property="BorderBrush"
+                    Value="#E4E7F0"/>
+
+            <Setter Property="Foreground"
+                    Value="#30354D"/>
+
+            <Setter Property="Cursor"
+                    Value="Hand"/>
+
+            <Setter Property="Effect">
+
+                <Setter.Value>
+
+                    <DropShadowEffect
+                        Color="#B9BFD0"
+                        BlurRadius="6"
+                        ShadowDepth="1"
+                        Opacity="0.35"/>
+
                 </Setter.Value>
+
             </Setter>
+
         </Style>
 
-        <!-- Bomb Tile -->
-        <Style x:Key="BombTileStyle" TargetType="Button">
-            <Setter Property="Background" Value="#FFE8EC"/>
-            <Setter Property="Foreground" Value="#E5395B"/>
-            <Setter Property="FontSize" Value="34"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="MinHeight" Value="65"/>
-            <Setter Property="MinWidth" Value="65"/>
-            <Setter Property="Cursor" Value="Arrow"/>
-            <Setter Property="IsEnabled" Value="False"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}"
-                                BorderBrush="#FFB6C2"
-                                BorderThickness="1"
-                                CornerRadius="14">
 
-                            <ContentPresenter HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
+        <!-- ================= SAFE TILE ================= -->
+
+        <Style x:Key="SafeTileStyle"
+               TargetType="Button"
+               BasedOn="{StaticResource BaseTileStyle}">
+
+            <Setter Property="Background"
+                    Value="#E8FFF3"/>
+
+            <Setter Property="BorderBrush"
+                    Value="#A9EBCB"/>
+
+            <Setter Property="Foreground"
+                    Value="#0DAD68"/>
+
+            <Setter Property="FontSize"
+                    Value="40"/>
+
+            <Setter Property="Cursor"
+                    Value="Arrow"/>
+
+            <Setter Property="IsEnabled"
+                    Value="False"/>
+
         </Style>
 
-        <!-- New Game Button -->
-        <Style x:Key="NewGameStyle" TargetType="Button">
-            <Setter Property="Background" Value="#6C5CE7"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontSize" Value="17"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="35,16"/>
-            <Setter Property="MinWidth" Value="210"/>
-            <Setter Property="Cursor" Value="Hand"/>
+
+        <!-- ================= BOMB TILE ================= -->
+
+        <Style x:Key="BombTileStyle"
+               TargetType="Button"
+               BasedOn="{StaticResource BaseTileStyle}">
+
+            <Setter Property="Background"
+                    Value="#FFE8EC"/>
+
+            <Setter Property="BorderBrush"
+                    Value="#FFB6C2"/>
+
+            <Setter Property="Foreground"
+                    Value="#E5395B"/>
+
+            <Setter Property="FontSize"
+                    Value="40"/>
+
+            <Setter Property="Cursor"
+                    Value="Arrow"/>
+
+            <Setter Property="IsEnabled"
+                    Value="False"/>
+
+        </Style>
+
+
+        <!-- ================= NEW GAME BUTTON ================= -->
+
+        <Style x:Key="NewGameStyle"
+               TargetType="Button">
+
+            <Setter Property="Background"
+                    Value="{StaticResource PrimaryBrush}"/>
+
+            <Setter Property="Foreground"
+                    Value="White"/>
+
+            <Setter Property="FontSize"
+                    Value="17"/>
+
+            <Setter Property="FontWeight"
+                    Value="Bold"/>
+
+            <Setter Property="BorderThickness"
+                    Value="0"/>
+
+            <Setter Property="Padding"
+                    Value="35,16"/>
+
+            <Setter Property="MinWidth"
+                    Value="210"/>
+
+            <Setter Property="Cursor"
+                    Value="Hand"/>
+
             <Setter Property="Template">
+
                 <Setter.Value>
+
                     <ControlTemplate TargetType="Button">
+
                         <Border x:Name="NewGameBorder"
                                 Background="{TemplateBinding Background}"
                                 CornerRadius="12">
 
                             <Border.Effect>
-                                <DropShadowEffect Color="#6C5CE7"
-                                                  BlurRadius="12"
-                                                  ShadowDepth="3"
-                                                  Opacity="0.25"/>
+
+                                <DropShadowEffect
+                                    Color="#6C5CE7"
+                                    BlurRadius="12"
+                                    ShadowDepth="3"
+                                    Opacity="0.25"/>
+
                             </Border.Effect>
 
-                            <ContentPresenter HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"/>
+                            <ContentPresenter
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Margin="{TemplateBinding Padding}"/>
+
                         </Border>
 
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
+
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+
                                 <Setter TargetName="NewGameBorder"
                                         Property="Background"
                                         Value="#5848D2"/>
+
                             </Trigger>
 
-                            <Trigger Property="IsPressed" Value="True">
+                            <Trigger Property="IsPressed"
+                                     Value="True">
+
                                 <Setter TargetName="NewGameBorder"
                                         Property="Background"
                                         Value="#4435B5"/>
+
                             </Trigger>
+
                         </ControlTemplate.Triggers>
+
                     </ControlTemplate>
+
                 </Setter.Value>
+
             </Setter>
+
         </Style>
 
     </Window.Resources>
 
+
+    <!-- ================= MAIN WINDOW ================= -->
+
     <Grid>
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Disabled">
+        <ScrollViewer
+            VerticalScrollBarVisibility="Auto"
+            HorizontalScrollBarVisibility="Disabled"
+            Padding="0,0,4,0">
 
-            <StackPanel Width="570"
+            <StackPanel
+                MaxWidth="570"
+                HorizontalAlignment="Center"
+                Margin="30,25,30,30">
+
+
+                <!-- ================= HEADER ================= -->
+
+                <StackPanel
+                    HorizontalAlignment="Center"
+                    Margin="0,0,0,28">
+
+                    <Border
+                        Background="#E8E5FF"
+                        CornerRadius="20"
+                        Padding="14"
                         HorizontalAlignment="Center"
-                        Margin="30,25,30,30">
+                        Margin="0,0,0,14">
 
-                <!-- Header -->
-                <StackPanel HorizontalAlignment="Center"
-                            Margin="0,0,0,28">
+                        <TextBlock
+                            Text="💣"
+                            FontSize="34"
+                            FontFamily="Segoe UI Emoji"
+                            HorizontalAlignment="Center"/>
 
-                    <Border Background="#E8E5FF"
-                            CornerRadius="20"
-                            Padding="14"
-                            HorizontalAlignment="Center"
-                            Margin="0,0,0,14">
-                        <TextBlock Text="💣"
-                                   FontSize="34"
-                                   HorizontalAlignment="Center"/>
                     </Border>
 
-                    <TextBlock Text="Boom Avoider"
-                               FontSize="38"
-                               FontWeight="ExtraBold"
-                               Foreground="{StaticResource DarkBrush}"
-                               HorizontalAlignment="Center"/>
+                    <TextBlock
+                        Text="Boom Avoider"
+                        FontSize="38"
+                        FontWeight="ExtraBold"
+                        Foreground="{StaticResource DarkBrush}"
+                        HorizontalAlignment="Center"/>
 
-                    <TextBlock Text="Find the safe tiles. Avoid the bombs."
-                               FontSize="16"
-                               FontWeight="Medium"
-                               Foreground="{StaticResource MutedBrush}"
-                               HorizontalAlignment="Center"
-                               Margin="0,8,0,0"/>
+                    <TextBlock
+                        Text="Find the safe tiles. Avoid the bomb."
+                        FontSize="16"
+                        FontWeight="Medium"
+                        Foreground="{StaticResource MutedBrush}"
+                        HorizontalAlignment="Center"
+                        Margin="0,8,0,0"/>
+
                 </StackPanel>
 
-                <!-- Stats Cards -->
+
+                <!-- ================= STATS ================= -->
+
                 <Grid Margin="0,0,0,25">
+
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Score -->
-                    <Border Grid.Column="0"
-                            Background="#FFFFFF"
-                            CornerRadius="16"
-                            Margin="4"
-                            Padding="12,14"
-                            BorderBrush="#E7E9F1"
-                            BorderThickness="1">
+
+                    <!-- SCORE -->
+
+                    <Border
+                        Grid.Column="0"
+                        Background="#FFFFFF"
+                        CornerRadius="16"
+                        Margin="4"
+                        Padding="12,14"
+                        BorderBrush="#E7E9F1"
+                        BorderThickness="1">
 
                         <StackPanel>
-                            <TextBlock Text="SCORE"
-                                       FontSize="12"
-                                       FontWeight="Bold"
-                                       Foreground="#8B91A8"
-                                       HorizontalAlignment="Center"/>
 
-                            <TextBlock x:Name="ScoreText"
-                                       Text="0"
-                                       FontSize="28"
-                                       FontWeight="ExtraBold"
-                                       Foreground="#6C5CE7"
-                                       HorizontalAlignment="Center"
-                                       Margin="0,5,0,0"/>
+                            <TextBlock
+                                Text="SCORE"
+                                FontSize="12"
+                                FontWeight="Bold"
+                                Foreground="#8B91A8"
+                                HorizontalAlignment="Center"/>
+
+                            <TextBlock
+                                x:Name="ScoreText"
+                                Text="0"
+                                FontSize="28"
+                                FontWeight="ExtraBold"
+                                Foreground="#6C5CE7"
+                                HorizontalAlignment="Center"
+                                Margin="0,5,0,0"/>
+
                         </StackPanel>
+
                     </Border>
 
-                    <!-- Bombs -->
-                    <Border Grid.Column="1"
-                            Background="#FFFFFF"
-                            CornerRadius="16"
-                            Margin="4"
-                            Padding="12,14"
-                            BorderBrush="#E7E9F1"
-                            BorderThickness="1">
+
+                    <!-- BOMBS -->
+
+                    <Border
+                        Grid.Column="1"
+                        Background="#FFFFFF"
+                        CornerRadius="16"
+                        Margin="4"
+                        Padding="12,14"
+                        BorderBrush="#E7E9F1"
+                        BorderThickness="1">
 
                         <StackPanel>
-                            <TextBlock Text="BOMBS"
-                                       FontSize="12"
-                                       FontWeight="Bold"
-                                       Foreground="#8B91A8"
-                                       HorizontalAlignment="Center"/>
 
-                            <TextBlock x:Name="BombText"
-                                       Text="5"
-                                       FontSize="28"
-                                       FontWeight="ExtraBold"
-                                       Foreground="#E5395B"
-                                       HorizontalAlignment="Center"
-                                       Margin="0,5,0,0"/>
+                            <TextBlock
+                                Text="BOMBS"
+                                FontSize="12"
+                                FontWeight="Bold"
+                                Foreground="#8B91A8"
+                                HorizontalAlignment="Center"/>
+
+                            <TextBlock
+                                x:Name="BombText"
+                                Text="1"
+                                FontSize="28"
+                                FontWeight="ExtraBold"
+                                Foreground="#E5395B"
+                                HorizontalAlignment="Center"
+                                Margin="0,5,0,0"/>
+
                         </StackPanel>
+
                     </Border>
 
-                    <!-- Safe Left -->
-                    <Border Grid.Column="2"
-                            Background="#FFFFFF"
-                            CornerRadius="16"
-                            Margin="4"
-                            Padding="12,14"
-                            BorderBrush="#E7E9F1"
-                            BorderThickness="1">
+
+                    <!-- SAFE LEFT -->
+
+                    <Border
+                        Grid.Column="2"
+                        Background="#FFFFFF"
+                        CornerRadius="16"
+                        Margin="4"
+                        Padding="12,14"
+                        BorderBrush="#E7E9F1"
+                        BorderThickness="1">
 
                         <StackPanel>
-                            <TextBlock Text="SAFE LEFT"
-                                       FontSize="12"
-                                       FontWeight="Bold"
-                                       Foreground="#8B91A8"
-                                       HorizontalAlignment="Center"/>
 
-                            <TextBlock x:Name="SafeTilesText"
-                                       Text="20"
-                                       FontSize="28"
-                                       FontWeight="ExtraBold"
-                                       Foreground="#0DAD68"
-                                       HorizontalAlignment="Center"
-                                       Margin="0,5,0,0"/>
+                            <TextBlock
+                                Text="SAFE LEFT"
+                                FontSize="12"
+                                FontWeight="Bold"
+                                Foreground="#8B91A8"
+                                HorizontalAlignment="Center"/>
+
+                            <TextBlock
+                                x:Name="SafeTilesText"
+                                Text="8"
+                                FontSize="28"
+                                FontWeight="ExtraBold"
+                                Foreground="#0DAD68"
+                                HorizontalAlignment="Center"
+                                Margin="0,5,0,0"/>
+
                         </StackPanel>
+
                     </Border>
+
                 </Grid>
 
-                <!-- Game Board -->
-                <Border Background="#FFFFFF"
-                        CornerRadius="22"
-                        Padding="22"
-                        BorderBrush="#E7E9F1"
-                        BorderThickness="1">
+
+                <!-- ================= GAME BOARD ================= -->
+
+                <Border
+                    Background="#FFFFFF"
+                    CornerRadius="22"
+                    Padding="22"
+                    BorderBrush="#E7E9F1"
+                    BorderThickness="1">
 
                     <StackPanel>
 
-                        <TextBlock Text="CHOOSE A TILE"
-                                   FontSize="14"
-                                   FontWeight="Bold"
-                                   Foreground="#596078"
-                                   HorizontalAlignment="Center"
-                                   Margin="0,0,0,5"/>
+                        <TextBlock
+                            Text="CHOOSE A TILE"
+                            FontSize="14"
+                            FontWeight="Bold"
+                            Foreground="#596078"
+                            HorizontalAlignment="Center"
+                            Margin="0,0,0,5"/>
 
-                        <TextBlock Text="Can you find them all?"
-                                   FontSize="13"
-                                   Foreground="#9AA0B5"
-                                   HorizontalAlignment="Center"
-                                   Margin="0,0,0,18"/>
+                        <TextBlock
+                            Text="Find all 8 safe tiles to win!"
+                            FontSize="13"
+                            Foreground="#9AA0B5"
+                            HorizontalAlignment="Center"
+                            Margin="0,0,0,18"/>
 
-                        <!-- 5 x 5 Grid -->
-                        <UniformGrid x:Name="GameBoard"
-                                     Rows="5"
-                                     Columns="5"
-                                     HorizontalAlignment="Center"
-                                     Width="400"
-                                     Height="400"/>
-                    </StackPanel>
-                </Border>
-
-                <!-- New Game Button -->
-                <Button Content="🔄   NEW GAME"
-                        Style="{StaticResource NewGameStyle}"
-                        Click="NewGame_Click"
-                        HorizontalAlignment="Center"
-                        Margin="0,28,0,25"/>
-
-                <!-- Instructions Card -->
-                <Border Background="#FFFFFF"
-                        CornerRadius="16"
-                        Padding="20"
-                        BorderBrush="#E7E9F1"
-                        BorderThickness="1">
-
-                    <StackPanel>
-
-                        <TextBlock Text="HOW TO PLAY"
-                                   FontSize="13"
-                                   FontWeight="Bold"
-                                   Foreground="#596078"
-                                   HorizontalAlignment="Center"
-                                   Margin="0,0,0,14"/>
-
-                        <Grid Margin="0,0,0,10">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-
-                            <Border Background="#E8FFF3"
-                                    CornerRadius="8"
-                                    Width="32"
-                                    Height="32">
-                                <TextBlock Text="✓"
-                                           FontSize="18"
-                                           FontWeight="Bold"
-                                           Foreground="#0DAD68"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"/>
-                            </Border>
-
-                            <TextBlock Grid.Column="1"
-                                       Text="Find all 20 safe tiles to win."
-                                       FontSize="14"
-                                       FontWeight="SemiBold"
-                                       Foreground="#3D435A"
-                                       VerticalAlignment="Center"
-                                       Margin="12,0,0,0"/>
-                        </Grid>
-
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-
-                            <Border Background="#FFE8EC"
-                                    CornerRadius="8"
-                                    Width="32"
-                                    Height="32">
-                                <TextBlock Text="✗"
-                                           FontSize="18"
-                                           FontWeight="Bold"
-                                           Foreground="#E5395B"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"/>
-                            </Border>
-
-                            <TextBlock Grid.Column="1"
-                                       Text="Hitting one bomb ends the game."
-                                       FontSize="14"
-                                       FontWeight="SemiBold"
-                                       Foreground="#3D435A"
-                                       VerticalAlignment="Center"
-                                       Margin="12,0,0,0"/>
-                        </Grid>
+                        <UniformGrid
+                            x:Name="GameBoard"
+                            Rows="3"
+                            Columns="3"
+                            HorizontalAlignment="Center"
+                            Width="400"
+                            Height="400"/>
 
                     </StackPanel>
+
                 </Border>
 
-                <!-- Footer -->
-                <TextBlock Text="Boom Avoider  •  Have fun!"
-                           FontSize="13"
-                           FontWeight="Medium"
-                           Foreground="#A4A9BB"
-                           HorizontalAlignment="Center"
-                           Margin="0,22,0,0"/>
+
+                <!-- ================= NEW GAME ================= -->
+
+                <Button
+                    Content="🔄   NEW GAME"
+                    Style="{StaticResource NewGameStyle}"
+                    Click="NewGame_Click"
+                    HorizontalAlignment="Center"
+                    Padding="35,20"
+                    Margin="0,28,0,25"/>
+
+
+                <!-- ================= FOOTER ================= -->
+
+                <TextBlock
+                    Text="Boom Avoider  •  Have fun!"
+                    FontSize="13"
+                    FontWeight="Medium"
+                    Foreground="#A4A9BB"
+                    HorizontalAlignment="Center"
+                    Margin="0,22,0,0"/>
 
             </StackPanel>
+
         </ScrollViewer>
+
+
+        <!-- ================= RESULT OVERLAY ================= -->
+
+        <Grid
+            x:Name="ResultOverlay"
+            Background="#B3000000"
+            Visibility="Collapsed"
+            Panel.ZIndex="10">
+
+            <Border
+                Background="White"
+                CornerRadius="24"
+                Padding="40,36"
+                MaxWidth="380"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+
+                <Border.Effect>
+
+                    <DropShadowEffect
+                        Color="#000000"
+                        BlurRadius="30"
+                        ShadowDepth="6"
+                        Opacity="0.35"/>
+
+                </Border.Effect>
+
+
+                <StackPanel>
+
+
+                    <!-- RESULT ICON -->
+
+                    <Border
+                        x:Name="ResultIconBg"
+                        Background="#E8FFF3"
+                        CornerRadius="24"
+                        Width="72"
+                        Height="72"
+                        HorizontalAlignment="Center"
+                        Margin="0,0,0,18">
+
+                        <TextBlock
+                            x:Name="ResultIcon"
+                            Text="✓"
+                            FontSize="40"
+                            FontWeight="Bold"
+                            Foreground="#0DAD68"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"/>
+
+                    </Border>
+
+
+                    <!-- RESULT TITLE -->
+
+                    <TextBlock
+                        x:Name="ResultTitle"
+                        Text="You Win!"
+                        FontSize="28"
+                        FontWeight="ExtraBold"
+                        Foreground="#171A2B"
+                        HorizontalAlignment="Center"/>
+
+
+                    <!-- RESULT SUBTITLE -->
+
+                    <TextBlock
+                        x:Name="ResultSubtitle"
+                        Text="You found every safe tile."
+                        FontSize="14"
+                        FontWeight="Medium"
+                        Foreground="#7C829B"
+                        HorizontalAlignment="Center"
+                        Margin="0,8,0,24"/>
+
+
+                    <!-- SCORE ROW -->
+
+                    <Border
+                        Background="#F4F7FB"
+                        CornerRadius="14"
+                        Padding="18,14"
+                        Margin="0,0,0,24">
+
+                        <Grid>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+
+                            <!-- SCORE -->
+
+                            <StackPanel Grid.Column="0">
+
+                                <TextBlock
+                                    Text="SCORE"
+                                    FontSize="11"
+                                    FontWeight="Bold"
+                                    Foreground="#8B91A8"
+                                    HorizontalAlignment="Center"/>
+
+                                <TextBlock
+                                    x:Name="ResultScore"
+                                    Text="0"
+                                    FontSize="24"
+                                    FontWeight="ExtraBold"
+                                    Foreground="#6C5CE7"
+                                    HorizontalAlignment="Center"
+                                    Margin="0,4,0,0"/>
+
+                            </StackPanel>
+
+
+                            <!-- BEST -->
+
+                            <StackPanel Grid.Column="1">
+
+                                <TextBlock
+                                    Text="BEST"
+                                    FontSize="11"
+                                    FontWeight="Bold"
+                                    Foreground="#8B91A8"
+                                    HorizontalAlignment="Center"/>
+
+                                <TextBlock
+                                    x:Name="ResultBest"
+                                    Text="0"
+                                    FontSize="24"
+                                    FontWeight="ExtraBold"
+                                    Foreground="#0DAD68"
+                                    HorizontalAlignment="Center"
+                                    Margin="0,4,0,0"/>
+
+                            </StackPanel>
+
+                        </Grid>
+
+                    </Border>
+
+
+                    <!-- PLAY AGAIN -->
+
+                    <Button
+                        x:Name="PlayAgainButton"
+                        Content="🔄   PLAY AGAIN"
+                        Style="{StaticResource NewGameStyle}"
+                        Click="NewGame_Click"
+                        Padding="35,18"
+                        HorizontalAlignment="Center"/>
+
+                </StackPanel>
+
+            </Border>
+
+        </Grid>
+
     </Grid>
+
 </Window>

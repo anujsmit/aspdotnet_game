@@ -9,147 +9,307 @@ namespace BoomAvoider
     public partial class MainWindow : Window
     {
         private readonly Random random = new Random();
+
         private readonly List<Button> tiles = new List<Button>();
         private readonly HashSet<int> bombs = new HashSet<int>();
 
         private int score;
         private int safeTilesFound;
+        private int bestScore;
+        private bool gameOver;
 
-        private const int TotalTiles = 25;
-        private const int TotalBombs = 5;
+        // 3 × 3 = 9 tiles
+        private const int TotalTiles = 9;
+
+        // Number of bombs
+        private const int TotalBombs = 1;
+
+        // 9 - 1 = 8 safe tiles
+        private const int TotalSafeTiles = TotalTiles - TotalBombs;
+
+
+        // ============================================================
+        // CACHED COLORS
+        // ============================================================
+
+        private static readonly SolidColorBrush WinIconBgBrush =
+            new SolidColorBrush(Color.FromRgb(0xE8, 0xFF, 0xF3));
+
+        private static readonly SolidColorBrush WinIconFgBrush =
+            new SolidColorBrush(Color.FromRgb(0x0D, 0xAD, 0x68));
+
+        private static readonly SolidColorBrush LoseIconBgBrush =
+            new SolidColorBrush(Color.FromRgb(0xFF, 0xE8, 0xEC));
+
+        private static readonly SolidColorBrush LoseIconFgBrush =
+            new SolidColorBrush(Color.FromRgb(0xE5, 0x39, 0x5B));
+
+
+        // ============================================================
+        // CONSTRUCTOR
+        // ============================================================
 
         public MainWindow()
         {
             InitializeComponent();
+
             StartGame();
         }
+
+
+        // ============================================================
+        // START / RESET GAME
+        // ============================================================
 
         private void StartGame()
         {
             score = 0;
             safeTilesFound = 0;
+            gameOver = false;
 
             bombs.Clear();
             tiles.Clear();
+
             GameBoard.Children.Clear();
 
-            while (bombs.Count < TotalBombs)
-            {
-                bombs.Add(random.Next(TotalTiles));
-            }
+            ResultOverlay.Visibility = Visibility.Collapsed;
+
+
+            // --------------------------------------------------------
+            // Generate random bomb
+            // --------------------------------------------------------
+
+            int bombIndex = random.Next(TotalTiles);
+
+            bombs.Add(bombIndex);
+
+
+            // --------------------------------------------------------
+            // Create game tiles
+            // --------------------------------------------------------
 
             for (int i = 0; i < TotalTiles; i++)
             {
                 Button tile = new Button
                 {
                     Content = "?",
-                    FontSize = 36,
-                    FontWeight = FontWeights.Bold,
-                    Margin = new Thickness(5),
-                    MinHeight = 65,
-                    MinWidth = 65,
-                    Background = new SolidColorBrush(Color.FromRgb(232, 232, 232)),
-                    Foreground = new SolidColorBrush(Color.FromRgb(34, 34, 34)),
-                    BorderThickness = new Thickness(2),
-                    BorderBrush = new SolidColorBrush(Color.FromRgb(153, 153, 153)),
                     Tag = i,
-                    Cursor = System.Windows.Input.Cursors.Hand
+                    IsEnabled = true,
+                    Style = (Style)FindResource("GameTileStyle")
                 };
 
                 tile.Click += Tile_Click;
 
                 tiles.Add(tile);
+
                 GameBoard.Children.Add(tile);
             }
 
+
+            // Update UI
             UpdateStats();
         }
+
+
+        // ============================================================
+        // TILE CLICK
+        // ============================================================
 
         private void Tile_Click(object sender, RoutedEventArgs e)
         {
-            Button clickedTile = (Button)sender;
-            int index = (int)clickedTile.Tag;
+            // Game already finished
+            if (gameOver)
+                return;
 
+
+            // Make sure sender is a button
+            if (sender is not Button clickedTile)
+                return;
+
+
+            // Get tile index
+            if (clickedTile.Tag is not int index)
+                return;
+
+
+            // Already clicked
             if (!clickedTile.IsEnabled)
                 return;
 
+
+            // Disable immediately
             clickedTile.IsEnabled = false;
+
+
+            // ========================================================
+            // BOMB
+            // ========================================================
 
             if (bombs.Contains(index))
             {
-                
-                clickedTile.Content = "✗";
-                clickedTile.Foreground = new SolidColorBrush(Color.FromRgb(204, 0, 0));
-                clickedTile.Background = new SolidColorBrush(Color.FromRgb(245, 245, 245));
-                clickedTile.BorderBrush = new SolidColorBrush(Color.FromRgb(51, 51, 51));
-                clickedTile.BorderThickness = new Thickness(3);
+                RevealTile(
+                    clickedTile,
+                    "💣",
+                    "BombTileStyle"
+                );
 
-                ShowAllBombs();
 
-                MessageBox.Show(
-                    $"BOOM! 💥\n\nYour Score: {score}",
-                    "Game Over",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
+                // Show remaining safe tiles
+                RevealAllRemainingSafeTiles();
 
-                DisableAllTiles();
+
+                // Game over
+                EndGame(false);
+
                 return;
             }
 
-            
-            clickedTile.Content = "✓";
-            clickedTile.Foreground = new SolidColorBrush(Color.FromRgb(0, 170, 0));
-            clickedTile.Background = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-            clickedTile.BorderBrush = new SolidColorBrush(Color.FromRgb(51, 51, 51));
-            clickedTile.BorderThickness = new Thickness(3);
+
+            // ========================================================
+            // SAFE TILE
+            // ========================================================
+
+            RevealTile(
+                clickedTile,
+                "✓",
+                "SafeTileStyle"
+            );
+
 
             safeTilesFound++;
+
             score += 10;
 
+
+            // Update score / safe tiles
             UpdateStats();
 
-            if (safeTilesFound == TotalTiles - TotalBombs)
+
+            // ========================================================
+            // WIN CONDITION
+            // ========================================================
+
+            if (safeTilesFound >= TotalSafeTiles)
             {
-                ShowAllSafeTiles();
-
-                MessageBox.Show(
-                    $"YOU WIN! 🏆\n\nFinal Score: {score}",
-                    "Congratulations",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
-
-                DisableAllTiles();
+                EndGame(true);
             }
         }
 
-        private void ShowAllBombs()
+
+        // ============================================================
+        // REVEAL TILE
+        // ============================================================
+
+        private void RevealTile(
+            Button tile,
+            string content,
+            string styleKey)
         {
-            foreach (int bombIndex in bombs)
-            {
-                Button tile = tiles[bombIndex];
-                tile.Content = "✗";
-                tile.Foreground = new SolidColorBrush(Color.FromRgb(204, 0, 0));
-                tile.Background = new SolidColorBrush(Color.FromRgb(245, 245, 245));
-                tile.BorderBrush = new SolidColorBrush(Color.FromRgb(51, 51, 51));
-                tile.BorderThickness = new Thickness(3);
-            }
+            tile.Content = content;
+
+            tile.Style = (Style)FindResource(styleKey);
         }
 
-        private void ShowAllSafeTiles()
+
+        // ============================================================
+        // REVEAL REMAINING SAFE TILES
+        // ============================================================
+
+        private void RevealAllRemainingSafeTiles()
         {
             for (int i = 0; i < TotalTiles; i++)
             {
-                if (!bombs.Contains(i))
-                {
-                    Button tile = tiles[i];
-                    tile.Content = "✓";
-                    tile.Foreground = new SolidColorBrush(Color.FromRgb(0, 170, 0));
-                    tile.Background = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-                    tile.BorderBrush = new SolidColorBrush(Color.FromRgb(51, 51, 51));
-                    tile.BorderThickness = new Thickness(3);
-                }
+                // Don't reveal bomb as safe
+                if (bombs.Contains(i))
+                    continue;
+
+
+                // Already revealed
+                if (tiles[i].Content?.ToString() == "✓")
+                    continue;
+
+
+                RevealTile(
+                    tiles[i],
+                    "✓",
+                    "SafeTileStyle"
+                );
             }
         }
+
+
+        // ============================================================
+        // END GAME
+        // ============================================================
+
+        private void EndGame(bool won)
+        {
+            gameOver = true;
+
+
+            // Disable all tiles
+            DisableAllTiles();
+
+
+            // Update best score
+            if (score > bestScore)
+            {
+                bestScore = score;
+            }
+
+
+            // ========================================================
+            // WIN
+            // ========================================================
+
+            if (won)
+            {
+                ResultIconBg.Background = WinIconBgBrush;
+
+                ResultIcon.Text = "🏆";
+
+                ResultIcon.Foreground = WinIconFgBrush;
+
+                ResultTitle.Text = "You Win!";
+
+                ResultSubtitle.Text =
+                    "You found every safe tile.";
+            }
+
+
+            // ========================================================
+            // LOSS
+            // ========================================================
+
+            else
+            {
+                ResultIconBg.Background = LoseIconBgBrush;
+
+                ResultIcon.Text = "💣";
+
+                ResultIcon.Foreground = LoseIconFgBrush;
+
+                ResultTitle.Text = "Boom!";
+
+                ResultSubtitle.Text =
+                    "You hit the bomb. Try again!";
+            }
+
+
+            // Update result screen
+            ResultScore.Text = score.ToString();
+
+            ResultBest.Text = bestScore.ToString();
+
+
+            // Show overlay
+            ResultOverlay.Visibility = Visibility.Visible;
+        }
+
+
+        // ============================================================
+        // DISABLE ALL TILES
+        // ============================================================
 
         private void DisableAllTiles()
         {
@@ -159,16 +319,44 @@ namespace BoomAvoider
             }
         }
 
+
+        // ============================================================
+        // UPDATE GAME STATS
+        // ============================================================
+
         private void UpdateStats()
         {
+            // Score
             ScoreText.Text = score.ToString();
+
+
+            // Bomb count
             BombText.Text = TotalBombs.ToString();
 
-            int remainingSafeTiles = (TotalTiles - TotalBombs) - safeTilesFound;
-            SafeTilesText.Text = remainingSafeTiles.ToString();
+
+            // Remaining safe tiles
+            int remainingSafeTiles =
+                TotalSafeTiles - safeTilesFound;
+
+
+            if (remainingSafeTiles < 0)
+            {
+                remainingSafeTiles = 0;
+            }
+
+
+            SafeTilesText.Text =
+                remainingSafeTiles.ToString();
         }
 
-        private void NewGame_Click(object sender, RoutedEventArgs e)
+
+        // ============================================================
+        // NEW GAME BUTTON
+        // ============================================================
+
+        private void NewGame_Click(
+            object sender,
+            RoutedEventArgs e)
         {
             StartGame();
         }

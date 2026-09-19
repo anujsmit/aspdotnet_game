@@ -17,3 +17,5 @@ C:\Users\anujk\Documents\games\BoomAvoider\BoomAvoider\obj\Debug\net10.0-windows
 C:\Users\anujk\Documents\games\BoomAvoider\BoomAvoider\obj\Debug\net10.0-windows\BoomAvoider.pdb
 C:\Users\anujk\Documents\games\BoomAvoider\BoomAvoider\obj\Debug\net10.0-windows\BoomAvoider.genruntimeconfig.cache
 C:\Users\anujk\Documents\games\BoomAvoider\BoomAvoider\obj\Debug\net10.0-windows\ref\BoomAvoider.dll
+C:\Users\anujk\Documents\games\BoomAvoider\BoomAvoider\obj\Debug\net10.0-windows\BoomAvoider.sourcelink.json
+C:\Users\anujk\Documents\games\BoomAvoider\BoomAvoider\obj\Debug\net10.0-windows\BoomAvoi.AD345313.Up2Date
